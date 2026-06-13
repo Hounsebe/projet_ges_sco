@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class BulletinDTO {
     private Map<String, String> etudiant;
-    private List<LigneBulletinDTO> lignes;
+    private List<com.etablissement.gestion.dto.LigneBulletinDTO> lignes;
     private Double moyenneGenerale;
     private String mention;
     private String decision;
@@ -14,8 +14,8 @@ public class BulletinDTO {
 
     public Map<String, String> getEtudiant() { return etudiant; }
     public void setEtudiant(Map<String, String> etudiant) { this.etudiant = etudiant; }
-    public List<LigneBulletinDTO> getLignes() { return lignes; }
-    public void setLignes(List<LigneBulletinDTO> lignes) { this.lignes = lignes; }
+    public List<com.etablissement.gestion.dto.LigneBulletinDTO> getLignes() { return lignes; }
+    public void setLignes(List<com.etablissement.gestion.dto.LigneBulletinDTO> lignes) { this.lignes = lignes; }
     public Double getMoyenneGenerale() { return moyenneGenerale; }
     public void setMoyenneGenerale(Double moyenneGenerale) { this.moyenneGenerale = moyenneGenerale; }
     public String getMention() { return mention; }
