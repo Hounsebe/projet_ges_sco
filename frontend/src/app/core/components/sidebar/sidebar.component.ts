@@ -19,6 +19,7 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class SidebarComponent {
   navItems = [
+    { label: 'Tableau de bord', path: '/dashboard', icon: 'grid_view' },
     { label: 'Étudiants', path: '/etudiants', icon: 'people' },
     { label: 'Cours', path: '/cours', icon: 'auto_stories' },
     { label: 'Inscriptions', path: '/inscriptions', icon: 'assignment' },

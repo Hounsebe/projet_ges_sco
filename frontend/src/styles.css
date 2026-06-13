@@ -51,6 +51,12 @@
   button, a {
     -webkit-tap-highlight-color: transparent;
   }
+
+  /* Accessibility: Focus visible indicators */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-primary);
+    outline-offset: 2px;
+  }
 }
 
 @utility shadow-premium {

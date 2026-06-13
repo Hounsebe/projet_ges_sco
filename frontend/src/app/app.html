@@ -38,12 +38,13 @@
   </mat-toolbar>
 
   <!-- Main Container: Pin height to remaining viewport -->
-  <mat-sidenav-container class="flex-1 w-full bg-zinc-50 overflow-hidden" [hasBackdrop]="false">
+  <mat-sidenav-container class="flex-1 w-full bg-zinc-50 overflow-hidden" [hasBackdrop]="isMobile()">
     <!-- Premium Sidebar: Fixed to side, independent scroll -->
     <mat-sidenav
       #sidenav
-      mode="side"
+      [mode]="isMobile() ? 'over' : 'side'"
       [opened]="isSidenavOpen()"
+      (closed)="isSidenavOpen.set(false)"
       class="w-[280px] bg-white border-r border-zinc-200/60 flex flex-col shrink-0 h-full"
     >
       <div class="px-5 py-8 flex-1 overflow-hidden">

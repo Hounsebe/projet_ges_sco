@@ -1,0 +1,67 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { DashboardStatsComponent, StatItem } from '../../shared/components/dashboard-stats.component';
+
+@Component({
+  selector: 'app-dashboard',
+  standalone: true,
+  imports: [CommonModule, MatIconModule, DashboardStatsComponent],
+  template: `
+    <div class="flex flex-col gap-10">
+      <!-- Dashboard Header -->
+      <div class="space-y-1.5">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="px-2 py-0.5 rounded-md bg-zinc-100 text-[10px] font-bold text-zinc-500 uppercase tracking-wider border border-zinc-200/50">Aperçu</span>
+          <span class="w-1 h-1 rounded-full bg-zinc-300"></span>
+          <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Global</span>
+        </div>
+        <h1 class="text-4xl font-extrabold text-zinc-900 tracking-tight leading-none">Tableau de Bord</h1>
+        <p class="text-[15px] text-zinc-500 font-medium max-w-xl">Bienvenue sur votre espace de gestion. Voici un résumé de l'activité de l'établissement.</p>
+      </div>
+
+      <!-- Stats Overview -->
+      <app-dashboard-stats [stats]="overviewStats"></app-dashboard-stats>
+
+      <!-- Recent Activity / Placeholder -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="p-8 bg-white border border-zinc-200/60 rounded-[2rem] shadow-sm">
+          <h3 class="text-lg font-bold text-zinc-900 mb-6 flex items-center gap-2">
+            <mat-icon class="text-zinc-400">history</mat-icon>
+            Activités Récentes
+          </h3>
+          <div class="flex flex-col gap-4">
+            @for (i of [1,2,3]; track i) {
+              <div class="flex items-center gap-4 p-4 rounded-2xl bg-zinc-50 border border-zinc-100/50">
+                <div class="w-10 h-10 rounded-full bg-zinc-200 flex items-center justify-center text-zinc-500">
+                  <mat-icon class="scale-75">update</mat-icon>
+                </div>
+                <div class="flex-1">
+                  <div class="h-4 w-32 bg-zinc-200 rounded animate-pulse mb-2"></div>
+                  <div class="h-3 w-48 bg-zinc-100 rounded animate-pulse"></div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="p-8 bg-white border border-zinc-200/60 rounded-[2rem] shadow-sm">
+          <h3 class="text-lg font-bold text-zinc-900 mb-6 flex items-center gap-2">
+            <mat-icon class="text-zinc-400">event_note</mat-icon>
+            Événements à venir
+          </h3>
+          <div class="flex flex-col items-center justify-center h-48 text-center border-2 border-dashed border-zinc-100 rounded-2xl">
+            <p class="text-zinc-400 font-medium text-sm">Aucun événement prévu pour le moment</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  `
+})
+export class DashboardComponent {
+  overviewStats: StatItem[] = [
+    { label: 'Total Étudiants', value: '1,247', icon: 'groups', trend: '+4.2%', trendUp: true },
+    { label: 'Cours Actifs', value: '42', icon: 'auto_stories', trend: '+2', trendUp: true },
+    { label: 'Inscriptions', value: '842', icon: 'how_to_reg', trend: '+2.1%', trendUp: true }
+  ];
+}
