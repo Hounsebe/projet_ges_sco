@@ -1,0 +1,100 @@
+.cours-form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 24px;
+  background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.05), transparent 40%),
+              radial-gradient(circle at bottom left, rgba(168, 85, 247, 0.05), transparent 40%);
+}
+
+.form-card {
+  width: 100%;
+  max-width: 500px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.08),
+              0 0 50px -10px rgba(99, 102, 241, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 48px -12px rgba(0, 0, 0, 0.1),
+              0 0 60px -8px rgba(99, 102, 241, 0.08);
+}
+
+.form-header {
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.form-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1e1b4b;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+}
+
+.form-header p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+}
+
+.cours-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.form-actions button {
+  padding: 12px 32px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 12px;
+  height: 48px;
+  transition: all 0.2s ease;
+}
+
+.form-actions button:not([disabled]) {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+
+.form-actions button:not([disabled]):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+  background: linear-gradient(135deg, #4338ca, #6d28d9);
+}
+
+/* Custom Snackbars styled via global/panelClass */
+::ng-deep .success-snackbar {
+  background-color: #10b981 !important;
+  color: white !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+}
+
+::ng-deep .error-snackbar {
+  background-color: #ef4444 !important;
+  color: white !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+}

@@ -1,0 +1,62 @@
+.cours-list-container {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.add-btn {
+  height: 48px;
+  padding: 0 24px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+  transition: all 0.2s ease;
+}
+
+.add-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.35);
+  background: linear-gradient(135deg, #4338ca, #6d28d9) !important;
+}
+
+.table-card {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05),
+              0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+table {
+  background: transparent !important;
+}
+
+th.mat-mdc-header-cell {
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+td.mat-mdc-cell {
+  font-size: 15px;
+}
+
+tr.mat-mdc-row:last-child td {
+  border-bottom: none;
+}
+
+.empty-card {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+}

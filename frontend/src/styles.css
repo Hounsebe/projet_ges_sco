@@ -1,0 +1,24 @@
+@import "tailwindcss";
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+
+/* Base resets */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+/* Global Material overrides */
+.mat-mdc-snack-bar-container.success-snackbar {
+  --mdc-snackbar-container-color: #10b981;
+  --mdc-snackbar-supporting-text-color: white;
+  --mat-mdc-snack-bar-button-color: white;
+}
+
+.mat-mdc-snack-bar-container.error-snackbar {
+  --mdc-snackbar-container-color: #ef4444;
+  --mdc-snackbar-supporting-text-color: white;
+  --mat-mdc-snack-bar-button-color: white;
+}

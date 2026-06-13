@@ -1,0 +1,23 @@
+/* Active link styles scoped for the sidebar component */
+::ng-deep .active-link {
+  background-color: rgba(79, 70, 229, 0.1) !important;
+  color: #4f46e5 !important;
+}
+
+::ng-deep .active-link .mdc-list-item__primary-text {
+  color: #4f46e5 !important;
+}
+
+::ng-deep .active-link mat-icon {
+  color: #4f46e5 !important;
+}
+
+::ng-deep a.nav-item {
+  border-radius: 10px !important;
+  margin-bottom: 2px;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::ng-deep a.nav-item:not(.active-link):hover {
+  background-color: #f1f5f9 !important;
+}

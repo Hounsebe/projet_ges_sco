@@ -1,0 +1,8 @@
+mat-sidenav-container {
+  height: 100%;
+}
+
+mat-sidenav {
+  background-color: #ffffff !important;
+  border-right: 1px solid #e2e8f0 !important;
+}

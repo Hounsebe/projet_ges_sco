@@ -1,0 +1,61 @@
+<mat-nav-list class="flex flex-col gap-1.5 p-0">
+  <!-- Étudiants -->
+  <a
+    mat-list-item
+    [routerLink]="['/etudiants']"
+    routerLinkActive="active-link"
+    [routerLinkActiveOptions]="{ exact: false }"
+    class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all duration-200 font-medium"
+  >
+    <mat-icon matListItemIcon class="text-slate-400">people</mat-icon>
+    <span matListItemTitle>Étudiants</span>
+  </a>
+
+  <!-- Cours -->
+  <a
+    mat-list-item
+    [routerLink]="['/cours']"
+    routerLinkActive="active-link"
+    [routerLinkActiveOptions]="{ exact: false }"
+    class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all duration-200 font-medium"
+  >
+    <mat-icon matListItemIcon class="text-slate-400">school</mat-icon>
+    <span matListItemTitle>Cours</span>
+  </a>
+
+  <!-- Inscriptions -->
+  <a
+    mat-list-item
+    [routerLink]="['/inscriptions']"
+    routerLinkActive="active-link"
+    [routerLinkActiveOptions]="{ exact: false }"
+    class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all duration-200 font-medium"
+  >
+    <mat-icon matListItemIcon class="text-slate-400">assignment</mat-icon>
+    <span matListItemTitle>Inscriptions</span>
+  </a>
+
+  <!-- Notes -->
+  <a
+    mat-list-item
+    [routerLink]="['/notes']"
+    routerLinkActive="active-link"
+    [routerLinkActiveOptions]="{ exact: false }"
+    class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all duration-200 font-medium"
+  >
+    <mat-icon matListItemIcon class="text-slate-400">grade</mat-icon>
+    <span matListItemTitle>Notes</span>
+  </a>
+
+  <!-- Bulletins -->
+  <a
+    mat-list-item
+    [routerLink]="['/bulletins']"
+    routerLinkActive="active-link"
+    [routerLinkActiveOptions]="{ exact: false }"
+    class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all duration-200 font-medium"
+  >
+    <mat-icon matListItemIcon class="text-slate-400">description</mat-icon>
+    <span matListItemTitle>Bulletins</span>
+  </a>
+</mat-nav-list>
