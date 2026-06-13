@@ -1,61 +1,36 @@
-<mat-nav-list class="flex flex-col gap-1.5 p-0">
-  <!-- Étudiants -->
-  <a
-    mat-list-item
-    [routerLink]="['/etudiants']"
-    routerLinkActive="active-link"
-    [routerLinkActiveOptions]="{ exact: false }"
-    class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all duration-200 font-medium"
-  >
-    <mat-icon matListItemIcon class="text-slate-400">people</mat-icon>
-    <span matListItemTitle>Étudiants</span>
-  </a>
+<nav class="flex flex-col gap-1">
+  <div class="px-4 mb-5">
+    <span class="text-[10px] font-extrabold text-zinc-400 uppercase tracking-[0.25em] px-2">Main Menu</span>
+  </div>
+  
+  <div class="flex flex-col gap-1.5">
+    @for (item of navItems; track item.path) {
+      <a
+        [routerLink]="[item.path]"
+        routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: false }"
+        class="nav-item group flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-500 hover:bg-zinc-100/50 hover:text-zinc-900 transition-all duration-300 font-bold text-[13.5px]"
+      >
+        <div class="w-9 h-9 rounded-[14px] bg-zinc-50 border border-zinc-200/40 flex items-center justify-center group-hover:bg-white group-hover:shadow-premium transition-all icon-container">
+          <mat-icon class="scale-[0.85] transition-transform group-hover:scale-100">{{ item.icon }}</mat-icon>
+        </div>
+        <span class="tracking-tight">{{ item.label }}</span>
+        
+        <div class="ml-auto opacity-0 group-hover:opacity-100 transition-opacity active-indicator-minimal">
+          <div class="w-1 h-1 rounded-full bg-zinc-300"></div>
+        </div>
+      </a>
+    }
+  </div>
 
-  <!-- Cours -->
-  <a
-    mat-list-item
-    [routerLink]="['/cours']"
-    routerLinkActive="active-link"
-    [routerLinkActiveOptions]="{ exact: false }"
-    class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all duration-200 font-medium"
-  >
-    <mat-icon matListItemIcon class="text-slate-400">school</mat-icon>
-    <span matListItemTitle>Cours</span>
+  <div class="px-4 mt-10 mb-5">
+    <span class="text-[10px] font-extrabold text-zinc-400 uppercase tracking-[0.25em] px-2">Support</span>
+  </div>
+  
+  <a class="nav-item group flex items-center gap-4 px-4 py-3.5 rounded-2xl text-zinc-500 hover:bg-zinc-100/50 hover:text-zinc-900 transition-all duration-300 font-bold text-[13.5px] cursor-pointer">
+    <div class="w-9 h-9 rounded-[14px] bg-zinc-50 border border-zinc-200/40 flex items-center justify-center group-hover:bg-white group-hover:shadow-premium transition-all icon-container">
+      <mat-icon class="scale-[0.85] transition-transform group-hover:scale-100">help_outline</mat-icon>
+    </div>
+    <span class="tracking-tight">Centre d'aide</span>
   </a>
-
-  <!-- Inscriptions -->
-  <a
-    mat-list-item
-    [routerLink]="['/inscriptions']"
-    routerLinkActive="active-link"
-    [routerLinkActiveOptions]="{ exact: false }"
-    class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all duration-200 font-medium"
-  >
-    <mat-icon matListItemIcon class="text-slate-400">assignment</mat-icon>
-    <span matListItemTitle>Inscriptions</span>
-  </a>
-
-  <!-- Notes -->
-  <a
-    mat-list-item
-    [routerLink]="['/notes']"
-    routerLinkActive="active-link"
-    [routerLinkActiveOptions]="{ exact: false }"
-    class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all duration-200 font-medium"
-  >
-    <mat-icon matListItemIcon class="text-slate-400">grade</mat-icon>
-    <span matListItemTitle>Notes</span>
-  </a>
-
-  <!-- Bulletins -->
-  <a
-    mat-list-item
-    [routerLink]="['/bulletins']"
-    routerLinkActive="active-link"
-    [routerLinkActiveOptions]="{ exact: false }"
-    class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all duration-200 font-medium"
-  >
-    <mat-icon matListItemIcon class="text-slate-400">description</mat-icon>
-    <span matListItemTitle>Bulletins</span>
-  </a>
-</mat-nav-list>
+</nav>

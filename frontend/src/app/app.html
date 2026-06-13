@@ -1,54 +1,67 @@
-<div class="flex flex-col h-screen w-screen overflow-hidden bg-slate-50">
-  <!-- Navbar -->
-  <mat-toolbar class="flex items-center justify-between px-4 lg:px-6 bg-indigo-900 z-30 h-16 shrink-0 shadow-md">
-    <div class="flex items-center gap-3">
-      <button mat-icon-button (click)="toggleSidenav()" class="text-indigo-200 hover:text-white transition-colors">
-        <mat-icon>menu</mat-icon>
+<div class="flex flex-col h-[100dvh] w-screen overflow-hidden bg-zinc-50 font-sans">
+  <!-- Modernized Navbar: Fixed to top, no scrolling -->
+  <mat-toolbar class="flex items-center justify-between px-4 lg:px-8 bg-white z-40 h-16 shrink-0 border-b border-zinc-200/60">
+    <div class="flex items-center gap-5">
+      <button mat-icon-button (click)="toggleSidenav()" class="text-zinc-400 hover:text-zinc-900 transition-all active:scale-90 bg-zinc-50/50 rounded-xl">
+        <mat-icon class="scale-90">menu</mat-icon>
       </button>
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
-          <mat-icon class="text-white text-lg">school</mat-icon>
+      
+      <div class="flex items-center gap-3 group cursor-pointer">
+        <div class="w-10 h-10 rounded-2xl bg-zinc-950 flex items-center justify-center shadow-lg shadow-zinc-950/20 group-hover:scale-105 transition-transform duration-500">
+          <mat-icon class="text-white text-lg scale-90">school</mat-icon>
         </div>
-        <span class="text-lg font-bold tracking-tight text-white">
-          {{ title() }}
-        </span>
+        <div class="flex flex-col">
+          <span class="text-[15px] font-extrabold tracking-tight text-zinc-900 uppercase">
+            {{ title() }}
+          </span>
+          <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest leading-none">Management System</span>
+        </div>
       </div>
     </div>
 
-    <div class="flex items-center gap-3">
-      <button mat-icon-button class="text-indigo-200 hover:text-white transition-colors">
-        <mat-icon>notifications_none</mat-icon>
+    <div class="flex items-center gap-4">
+      <button mat-icon-button class="text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50 transition-all rounded-xl relative active:scale-95">
+        <mat-icon class="scale-90">notifications</mat-icon>
+        <span class="absolute top-2.5 right-2.5 w-2 h-2 bg-brand-primary rounded-full border-2 border-white"></span>
       </button>
-      <div class="flex items-center gap-2 border-l border-indigo-700 pl-3">
-        <div class="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold text-sm">
-          A
+      
+      <div class="flex items-center gap-3 border-l border-zinc-100 pl-5 ml-1">
+        <div class="flex flex-col items-end hidden lg:flex">
+          <span class="text-sm font-bold text-zinc-900 leading-tight tracking-tight">Administrateur</span>
+          <span class="text-[11px] text-zinc-400 font-medium">Full Access Mode</span>
         </div>
-        <span class="text-sm font-medium text-indigo-100 hidden sm:inline">Administrateur</span>
+        <div class="w-10 h-10 rounded-2xl bg-zinc-100 border border-zinc-200/50 flex items-center justify-center text-zinc-900 font-extrabold text-xs shadow-sm hover:border-zinc-300 transition-colors cursor-pointer">
+          AD
+        </div>
       </div>
     </div>
   </mat-toolbar>
 
-  <!-- Main Container -->
-  <mat-sidenav-container class="flex-1 w-full bg-slate-50">
-    <!-- Sidebar -->
+  <!-- Main Container: Pin height to remaining viewport -->
+  <mat-sidenav-container class="flex-1 w-full bg-zinc-50 overflow-hidden" [hasBackdrop]="false">
+    <!-- Premium Sidebar: Fixed to side, independent scroll -->
     <mat-sidenav
       #sidenav
       mode="side"
       [opened]="isSidenavOpen()"
-      class="w-64 bg-white border-r border-slate-200 flex flex-col shrink-0"
+      class="w-[280px] bg-white border-r border-zinc-200/60 flex flex-col shrink-0 h-full"
     >
-      <div class="px-3 py-4 flex-1">
-        <app-sidebar class="w-full flex-1"></app-sidebar>
+      <div class="px-5 py-8 flex-1 overflow-hidden">
+        <app-sidebar class="w-full"></app-sidebar>
       </div>
 
-      <div class="p-4 border-t border-slate-100">
-        <div class="text-xs text-slate-400 font-medium text-center">Version 1.0.0</div>
+      <div class="p-6 shrink-0">
+        <div class="p-4 rounded-2xl bg-zinc-50/80 border border-zinc-200/40 flex flex-col gap-3">
+          <p class="text-[10px] text-zinc-400 font-bold uppercase tracking-widest text-center leading-normal">Version 1.0.0 Stable Build</p>
+        </div>
       </div>
     </mat-sidenav>
 
-    <!-- Main Content Area -->
-    <mat-sidenav-content class="bg-slate-50 overflow-y-auto">
-      <router-outlet></router-outlet>
+    <!-- Main Content Area: The only scrollable part of the page -->
+    <mat-sidenav-content class="bg-zinc-50 overflow-y-auto h-full">
+      <main class="p-8 lg:p-12">
+        <router-outlet></router-outlet>
+      </main>
     </mat-sidenav-content>
   </mat-sidenav-container>
 </div>

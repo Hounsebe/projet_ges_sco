@@ -1,8 +1,42 @@
 mat-sidenav-container {
+  /* Fills the flex-1 area of the app-root div */
   height: 100%;
+  min-height: 0; 
 }
 
 mat-sidenav {
   background-color: #ffffff !important;
-  border-right: 1px solid #e2e8f0 !important;
+  border-right: 1px solid var(--color-zinc-200, #e4e4e7) !important;
+  overflow: hidden !important; 
+}
+
+/* Hide the internal Material Drawer scrollbar */
+::ng-deep .mat-drawer-inner-container {
+  overflow: hidden !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+::ng-deep .mat-drawer-inner-container::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Ensure children are scrollable if needed WITHOUT scrollbar (optional safety) */
+::ng-deep .mat-drawer-inner-container > div {
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+::ng-deep .mat-drawer-inner-container > div::-webkit-scrollbar {
+  display: none;
+}
+
+/* Global scrollbar hide utility */
+::ng-deep .scrollbar-hide::-webkit-scrollbar {
+  display: none !important;
+}
+::ng-deep .scrollbar-hide {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
 }

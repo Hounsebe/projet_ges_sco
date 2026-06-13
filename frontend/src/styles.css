@@ -1,24 +1,85 @@
 @import "tailwindcss";
-@import "@angular/material/prebuilt-themes/indigo-pink.css";
 
-/* Base resets */
-html, body {
-  height: 100%;
-  margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-  background-color: #f8fafc;
-  color: #0f172a;
+/* Premium Color System & Base Styles */
+@theme {
+  --color-zinc-50: #fafafa;
+  --color-zinc-100: #f4f4f5;
+  --color-zinc-200: #e4e4e7;
+  --color-zinc-300: #d4d4d8;
+  --color-zinc-400: #a1a1aa;
+  --color-zinc-500: #71717a;
+  --color-zinc-600: #52525b;
+  --color-zinc-700: #3f3f46;
+  --color-zinc-800: #27272a;
+  --color-zinc-900: #18181b;
+  --color-zinc-950: #09090b;
+
+  --color-brand-primary: #2563eb;
+  --color-brand-secondary: #3b82f6;
+  
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
 }
 
-/* Global Material overrides */
+@layer base {
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--color-zinc-50);
+    color: var(--color-zinc-950);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+  }
+
+  /* Snappy global transitions using premium bezier */
+  * {
+    transition-duration: 300ms;
+    transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply tracking-tight font-bold text-zinc-900;
+  }
+
+  .font-mono {
+    font-family: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  }
+  
+  /* Remove tap highlight on mobile */
+  button, a {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@utility shadow-premium {
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0, 0, 0, 0.02);
+}
+
+@utility shadow-inner-light {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+@utility glass-card {
+  @apply backdrop-blur-xl bg-white/70 border border-white/20 shadow-premium shadow-inner-light;
+}
+
+/* Material Overrides for Premium Feel */
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+
+/* Tweak Material defaults to match our Zinc/Blue system */
+.mat-mdc-button, .mat-mdc-flat-button {
+  --mdc-filled-button-container-shape: 10px;
+  --mdc-text-button-label-text-font: 'Inter';
+}
+
 .mat-mdc-snack-bar-container.success-snackbar {
-  --mdc-snackbar-container-color: #10b981;
-  --mdc-snackbar-supporting-text-color: white;
-  --mat-mdc-snack-bar-button-color: white;
+  --mdc-snackbar-container-color: #059669; /* emerald-600 */
+  --mdc-snackbar-supporting-text-color: #ecfdf5;
 }
 
 .mat-mdc-snack-bar-container.error-snackbar {
-  --mdc-snackbar-container-color: #ef4444;
-  --mdc-snackbar-supporting-text-color: white;
-  --mat-mdc-snack-bar-button-color: white;
+  --mdc-snackbar-container-color: #dc2626; /* red-600 */
+  --mdc-snackbar-supporting-text-color: #fef2f2;
 }
