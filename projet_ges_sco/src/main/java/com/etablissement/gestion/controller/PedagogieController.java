@@ -4,6 +4,7 @@ import com.etablissement.gestion.model.Inscription;
 import com.etablissement.gestion.model.Note;
 import com.etablissement.gestion.repository.InscriptionRepository;
 import com.etablissement.gestion.repository.NoteRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,6 @@ public class PedagogieController {
             Inscription nouvelle = inscriptionRepository.save(inscription);
             return new ResponseEntity<>(nouvelle, HttpStatus.CREATED);
         } catch (Exception e) {
-            // Capture le blocage d'unicité de la base de données (doublon étudiant-cours)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body("Erreur : Cet étudiant est déjà inscrit à ce cours.");
         }
@@ -42,5 +42,19 @@ public class PedagogieController {
     public ResponseEntity<?> saisirNote(@Valid @RequestBody Note note) {
         Note nouvelle = noteRepository.save(note);
         return new ResponseEntity<>(nouvelle, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/notes/{id}")
+    public ResponseEntity<Note> modifierNote(@PathVariable Long id, @Valid @RequestBody Note noteUpdate) {
+        Note note = noteRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Note introuvable avec ID = " + id));
+        note.setValeur(noteUpdate.getValeur());
+        if (noteUpdate.getCommentaire() != null) {
+            note.setCommentaire(noteUpdate.getCommentaire());
+        }
+        if (noteUpdate.getTypeEvaluation() != null) {
+            note.setTypeEvaluation(noteUpdate.getTypeEvaluation());
+        }
+        return ResponseEntity.ok(noteRepository.save(note));
     }
 }

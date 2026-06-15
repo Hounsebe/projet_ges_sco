@@ -13,9 +13,16 @@ import { Bulletin } from '../../../core/models/bulletin.model';
   template: `
     <div class="p-6 max-w-6xl mx-auto flex flex-col gap-8">
       <div class="space-y-2">
-        <p class="text-sm uppercase tracking-[0.28em] text-indigo-600 font-semibold">Bulletin de notes</p>
-        <h1 class="text-3xl sm:text-4xl font-semibold text-slate-900">Générer le bulletin d'un étudiant</h1>
-        <p class="max-w-2xl text-sm text-slate-500">Saisissez l'identifiant de l'étudiant puis cliquez sur « Générer le bulletin » pour afficher sa fiche de notes.</p>
+        <p class="text-sm uppercase tracking-[0.28em] text-indigo-600 font-semibold">
+          Bulletin de notes
+        </p>
+        <h1 class="text-3xl sm:text-4xl font-semibold text-slate-900">
+          Générer le bulletin d'un étudiant
+        </h1>
+        <p class="max-w-2xl text-sm text-slate-500">
+          Saisissez l'identifiant de l'étudiant puis cliquez sur « Générer le bulletin » pour
+          afficher sa fiche de notes.
+        </p>
       </div>
 
       <section class="grid gap-4 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
@@ -24,7 +31,11 @@ import { Bulletin } from '../../../core/models/bulletin.model';
             <h2 class="text-xl font-semibold text-slate-900">Recherche par ID étudiant</h2>
             <p class="text-sm text-slate-500">Entrez un identifiant pour charger le bulletin.</p>
           </div>
-          <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-3 sm:flex-row sm:items-center w-full sm:w-auto">
+          <form
+            [formGroup]="searchForm"
+            (ngSubmit)="onSubmit()"
+            class="flex flex-col gap-3 sm:flex-row sm:items-center w-full sm:w-auto"
+          >
             <input
               type="text"
               formControlName="etudiantId"
@@ -42,7 +53,10 @@ import { Bulletin } from '../../../core/models/bulletin.model';
         </div>
       </section>
 
-      <div *ngIf="errorMessage" class="rounded-3xl border border-red-200 bg-red-50 p-5 text-red-700 shadow-sm">
+      <div
+        *ngIf="errorMessage"
+        class="rounded-3xl border border-red-200 bg-red-50 p-5 text-red-700 shadow-sm"
+      >
         <div class="flex items-start gap-3">
           <div class="mt-0.5 rounded-full bg-red-100 p-2 text-red-600">!</div>
           <div>
@@ -58,20 +72,34 @@ import { Bulletin } from '../../../core/models/bulletin.model';
             <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div class="space-y-3">
                 <p class="text-sm uppercase tracking-[0.24em] text-slate-500">Étudiant</p>
-                <h2 class="text-2xl font-semibold text-slate-900">{{ bulletin.etudiant.prenom }} {{ bulletin.etudiant.nom }}</h2>
-                <p class="text-sm text-slate-500">Matricule : <span class="font-semibold text-slate-900">{{ bulletin.etudiant.matricule }}</span></p>
+                <h2 class="text-2xl font-semibold text-slate-900">
+                  {{ bulletin.etudiant.prenom }} {{ bulletin.etudiant.nom }}
+                </h2>
+                <p class="text-sm text-slate-500">
+                  Matricule :
+                  <span class="font-semibold text-slate-900">{{
+                    bulletin.etudiant.matricule
+                  }}</span>
+                </p>
               </div>
               <div class="grid gap-4 sm:grid-cols-2">
                 <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
                   <p class="text-sm uppercase tracking-[0.16em] text-slate-500">Moyenne générale</p>
-                  <p class="mt-3 text-3xl font-semibold text-slate-900">{{ bulletin.moyenneGenerale | number:'1.1-1' }} / 20</p>
+                  <p class="mt-3 text-3xl font-semibold text-slate-900">
+                    {{ bulletin.moyenneGenerale | number: '1.1-1' }} / 20
+                  </p>
                 </div>
                 <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5">
                   <p class="text-sm uppercase tracking-[0.16em] text-slate-500">Décision</p>
-                  <div class="mt-3 inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold" [ngClass]="getDecisionClasses(bulletin.decision)">
+                  <div
+                    class="mt-3 inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold"
+                    [ngClass]="getDecisionClasses(bulletin.decision)"
+                  >
                     {{ bulletin.decision }}
                   </div>
-                  <p class="mt-4 text-sm text-slate-600"><span class="font-semibold">Mention :</span> {{ bulletin.mention }}</p>
+                  <p class="mt-4 text-sm text-slate-600">
+                    <span class="font-semibold">Mention :</span> {{ bulletin.mention }}
+                  </p>
                 </div>
               </div>
             </div>
@@ -82,10 +110,18 @@ import { Bulletin } from '../../../core/models/bulletin.model';
           <table class="min-w-full text-left text-sm">
             <thead class="bg-slate-50">
               <tr>
-                <th class="px-6 py-4 font-semibold uppercase tracking-[0.16em] text-slate-500">Cours</th>
-                <th class="px-6 py-4 font-semibold uppercase tracking-[0.16em] text-slate-500">Coefficient</th>
-                <th class="px-6 py-4 font-semibold uppercase tracking-[0.16em] text-slate-500">Notes obtenues</th>
-                <th class="px-6 py-4 font-semibold uppercase tracking-[0.16em] text-slate-500">Moyenne du cours</th>
+                <th class="px-6 py-4 font-semibold uppercase tracking-[0.16em] text-slate-500">
+                  Cours
+                </th>
+                <th class="px-6 py-4 font-semibold uppercase tracking-[0.16em] text-slate-500">
+                  Coefficient
+                </th>
+                <th class="px-6 py-4 font-semibold uppercase tracking-[0.16em] text-slate-500">
+                  Notes obtenues
+                </th>
+                <th class="px-6 py-4 font-semibold uppercase tracking-[0.16em] text-slate-500">
+                  Moyenne du cours
+                </th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-200 bg-white">
@@ -95,12 +131,15 @@ import { Bulletin } from '../../../core/models/bulletin.model';
                 </td>
                 <td class="px-6 py-5 text-slate-600">{{ ligne.coefficient }}</td>
                 <td class="px-6 py-5 text-slate-600">
-                  DS : {{ ligne.notes['DS'] !== undefined ? ligne.notes['DS'] : '-' }} | 
-                  EXAM : {{ ligne.notes['EXAM'] !== undefined ? ligne.notes['EXAM'] : '-' }} | 
-                  TP : {{ ligne.notes['TP'] !== undefined ? ligne.notes['TP'] : '-' }}
+                  DS : {{ ligne.notes['DS'] !== undefined ? ligne.notes['DS'] : '-' }} | EXAM :
+                  {{ ligne.notes['EXAM'] !== undefined ? ligne.notes['EXAM'] : '-' }} | TP :
+                  {{ ligne.notes['TP'] !== undefined ? ligne.notes['TP'] : '-' }}
                 </td>
                 <td class="px-6 py-5">
-                  <span class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-700">{{ ligne.moyenneCours | number:'1.1-1' }}</span>
+                  <span
+                    class="inline-flex rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-700"
+                    >{{ ligne.moyenneCours | number: '1.1-1' }}</span
+                  >
                 </td>
               </tr>
             </tbody>
@@ -108,7 +147,7 @@ import { Bulletin } from '../../../core/models/bulletin.model';
         </div>
       </section>
     </div>
-  `
+  `,
 })
 export class BulletinViewComponent {
   searchForm: FormGroup;
@@ -119,10 +158,10 @@ export class BulletinViewComponent {
   constructor(
     private fb: FormBuilder,
     private bulletinService: BulletinService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
   ) {
     this.searchForm = this.fb.group({
-      etudiantId: ['', [Validators.required, Validators.pattern('^[0-9]+$')]]
+      etudiantId: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
     });
   }
 
@@ -137,7 +176,8 @@ export class BulletinViewComponent {
     this.isLoading = true;
 
     const etudiantId = Number(this.searchForm.value.etudiantId);
-    this.bulletinService.getBulletin(etudiantId)
+    this.bulletinService
+      .getBulletin(etudiantId)
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
         next: (bulletin) => {
@@ -153,9 +193,9 @@ export class BulletinViewComponent {
             duration: 5000,
             horizontalPosition: 'end',
             verticalPosition: 'top',
-            panelClass: ['error-snackbar']
+            panelClass: ['error-snackbar'],
           });
-        }
+        },
       });
   }
 
@@ -172,4 +212,3 @@ export class BulletinViewComponent {
       .join(' | ');
   }
 }
-

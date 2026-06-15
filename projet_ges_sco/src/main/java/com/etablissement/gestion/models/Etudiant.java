@@ -25,7 +25,9 @@ public class Etudiant {
     private String email;
 
     private LocalDate dateNaissance;
+
     private String filiere;
+
     private String niveau;
 
     public Etudiant() {}
