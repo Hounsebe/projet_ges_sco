@@ -12,7 +12,19 @@ export class EtudiantService {
 
   constructor(private http: HttpClient) {}
 
+  getAll(): Observable<Etudiant[]> {
+    return this.http.get<Etudiant[]>(this.apiUrl);
+  }
+
   create(etudiant: Etudiant): Observable<Etudiant> {
     return this.http.post<Etudiant>(this.apiUrl, etudiant);
+  }
+
+  update(id: number, etudiant: Etudiant): Observable<Etudiant> {
+    return this.http.put<Etudiant>(`${this.apiUrl}/${id}`, etudiant);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

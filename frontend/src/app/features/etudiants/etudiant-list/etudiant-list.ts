@@ -1,61 +1,188 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { finalize } from 'rxjs/operators';
+import { EtudiantService } from '../../../core/services/etudiant.service';
+import { Etudiant } from '../../../core/models/etudiant.model';
+import { EtudiantEditDialogComponent } from '../etudiant-edit-dialog/etudiant-edit-dialog';
+import { EtudiantDeleteDialogComponent } from '../etudiant-delete-dialog/etudiant-delete-dialog';
 
 @Component({
   selector: 'app-etudiant-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, MatButtonModule, MatIconModule],
-  template: `
-    <div class="flex flex-col gap-10">
-      <!-- Premium Header Section -->
-      <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-        <div class="space-y-1.5">
-          <div class="flex items-center gap-2 mb-1">
-            <span class="px-2 py-0.5 rounded-md bg-zinc-100 text-[10px] font-bold text-zinc-500 uppercase tracking-wider border border-zinc-200/50">Module</span>
-            <span class="w-1 h-1 rounded-full bg-zinc-300"></span>
-            <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Académique</span>
-          </div>
-          <h1 class="text-4xl font-extrabold text-zinc-900 tracking-tight leading-none">Liste des Étudiants</h1>
-          <p class="text-[15px] text-zinc-500 font-medium max-w-xl">Gérez l'ensemble des dossiers étudiants, consultez leurs inscriptions et suivez leur parcours académique.</p>
-        </div>
-        
-        <button mat-flat-button routerLink="/etudiants/nouveau" 
-          class="group flex items-center gap-3 h-14 px-8 rounded-2xl bg-zinc-900 shadow-xl shadow-zinc-900/10 text-white font-bold hover:bg-zinc-800 transition-all active:scale-[0.98]">
-          <mat-icon class="scale-90 group-hover:rotate-90 transition-transform duration-500">add</mat-icon>
-          Inscrire un étudiant
-        </button>
-      </div>
-
-      <!-- Empty State / List Container -->
-      <div class="relative group">
-        <!-- Decorative Background Gradient -->
-        <div class="absolute -inset-1 bg-gradient-to-r from-zinc-100 to-zinc-50 rounded-[2.5rem] blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
-        
-        <div class="relative flex flex-col items-center justify-center p-20 bg-white border border-zinc-200/60 rounded-[2rem] shadow-premium text-center">
-          <div class="relative mb-8">
-            <div class="absolute inset-0 bg-zinc-100 rounded-3xl rotate-6 scale-95 opacity-50"></div>
-            <div class="relative w-20 h-20 rounded-3xl bg-zinc-50 border border-zinc-200/50 flex items-center justify-center text-zinc-900 shadow-sm">
-              <mat-icon class="text-4xl scale-110">people_outline</mat-icon>
-            </div>
-          </div>
-          
-          <h3 class="text-xl font-extrabold text-zinc-900 mb-2 tracking-tight">Aucun étudiant répertorié</h3>
-          <p class="text-[15px] text-zinc-400 font-medium max-w-xs mb-8 leading-relaxed">Commencez par ajouter votre premier étudiant pour activer les fonctionnalités de suivi.</p>
-          
-          <div class="flex items-center gap-4">
-            <div class="flex -space-x-3 overflow-hidden">
-              <div class="inline-block h-8 w-8 rounded-full ring-2 ring-white bg-zinc-100"></div>
-              <div class="inline-block h-8 w-8 rounded-full ring-2 ring-white bg-zinc-200"></div>
-              <div class="inline-block h-8 w-8 rounded-full ring-2 ring-white bg-zinc-300"></div>
-            </div>
-            <span class="text-xs font-bold text-zinc-400 uppercase tracking-wider">Prêt pour l'importation</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  `
+  imports: [
+    CommonModule,
+    RouterLink,
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule,
+    MatSelectModule,
+    MatFormFieldModule,
+    MatProgressSpinnerModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    MatTooltipModule,
+  ],
+  templateUrl: './etudiant-list.html',
+  styleUrl: './etudiant-list.css',
 })
-export class EtudiantListComponent {}
+export class EtudiantListComponent implements OnInit {
+  displayedColumns = ['matricule', 'nomPrenom', 'email', 'filiere', 'niveau', 'actions'];
+
+  etudiants: Etudiant[] = [];
+  filteredEtudiants: Etudiant[] = [];
+  isLoading = true;
+
+  filiereFilter = '';
+  niveauFilter = '';
+
+  filiereOptions: string[] = [];
+  niveauOptions: string[] = [];
+
+  constructor(
+    private etudiantService: EtudiantService,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
+    private router: Router,
+    private cdr: ChangeDetectorRef,
+  ) {}
+
+  ngOnInit(): void {
+    this.loadEtudiants();
+  }
+
+  loadEtudiants(): void {
+    this.isLoading = true;
+    this.etudiantService
+      .getAll()
+      .pipe(
+        finalize(() => {
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }),
+      )
+      .subscribe({
+        next: (data) => {
+          this.etudiants = data;
+          this.buildFilterOptions();
+          this.applyFilters();
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.snackBar.open('Impossible de charger les étudiants.', 'Fermer', {
+            duration: 5000,
+            horizontalPosition: 'end',
+            verticalPosition: 'top',
+            panelClass: ['error-snackbar'],
+          });
+          this.cdr.detectChanges();
+        },
+      });
+  }
+
+  buildFilterOptions(): void {
+    this.filiereOptions = [...new Set(this.etudiants.map((e) => e.filiere).filter(Boolean))].sort();
+    this.niveauOptions = [...new Set(this.etudiants.map((e) => e.niveau).filter(Boolean))].sort();
+  }
+
+  applyFilters(): void {
+    this.filteredEtudiants = this.etudiants.filter((e) => {
+      const matchFiliere = !this.filiereFilter || e.filiere === this.filiereFilter;
+      const matchNiveau = !this.niveauFilter || e.niveau === this.niveauFilter;
+      return matchFiliere && matchNiveau;
+    });
+  }
+
+  onFilterChange(): void {
+    this.applyFilters();
+    this.cdr.detectChanges();
+  }
+
+  clearFilters(): void {
+    this.filiereFilter = '';
+    this.niveauFilter = '';
+    this.applyFilters();
+    this.cdr.detectChanges();
+  }
+
+  openBulletin(etudiant: Etudiant): void {
+    this.router.navigate(['/bulletins'], { queryParams: { etudiantId: etudiant.id } });
+  }
+
+  openEditDialog(etudiant: Etudiant): void {
+    const dialogRef = this.dialog.open(EtudiantEditDialogComponent, {
+      data: { etudiant },
+      panelClass: 'premium-dialog',
+      autoFocus: false,
+    });
+
+    dialogRef.afterClosed().subscribe((updated: Etudiant | undefined) => {
+      if (!updated) return;
+
+      this.etudiantService.update(updated.id, updated).subscribe({
+        next: () => {
+          this.snackBar.open('Étudiant modifié avec succès.', 'Fermer', {
+            duration: 3000,
+            horizontalPosition: 'end',
+            verticalPosition: 'top',
+            panelClass: ['success-snackbar'],
+          });
+          this.loadEtudiants();
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.snackBar.open('Erreur lors de la modification.', 'Fermer', {
+            duration: 5000,
+            horizontalPosition: 'end',
+            verticalPosition: 'top',
+            panelClass: ['error-snackbar'],
+          });
+          this.cdr.detectChanges();
+        },
+      });
+    });
+  }
+
+  openDeleteDialog(etudiant: Etudiant): void {
+    const dialogRef = this.dialog.open(EtudiantDeleteDialogComponent, {
+      data: { etudiant },
+      panelClass: 'premium-dialog',
+      autoFocus: false,
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (!confirmed) return;
+
+      this.etudiantService.delete(etudiant.id).subscribe({
+        next: () => {
+          this.snackBar.open('Étudiant supprimé.', 'Fermer', {
+            duration: 3000,
+            horizontalPosition: 'end',
+            verticalPosition: 'top',
+            panelClass: ['success-snackbar'],
+          });
+          this.loadEtudiants();
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.snackBar.open('Erreur lors de la suppression.', 'Fermer', {
+            duration: 5000,
+            horizontalPosition: 'end',
+            verticalPosition: 'top',
+            panelClass: ['error-snackbar'],
+          });
+          this.cdr.detectChanges();
+        },
+      });
+    });
+  }
+}

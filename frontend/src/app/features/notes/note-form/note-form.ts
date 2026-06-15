@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -137,6 +137,7 @@ export class NoteFormComponent {
     private fb: FormBuilder,
     private noteService: NoteService,
     private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef,
   ) {
     this.noteForm = this.fb.group({
       inscriptionId: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
@@ -173,6 +174,7 @@ export class NoteFormComponent {
           verticalPosition: 'top',
         });
         this.noteForm.reset();
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.isSubmitting = false;
@@ -183,6 +185,7 @@ export class NoteFormComponent {
           verticalPosition: 'top',
           panelClass: ['error-snackbar'],
         });
+        this.cdr.detectChanges();
       },
     });
   }

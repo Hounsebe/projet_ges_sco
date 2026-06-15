@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -42,7 +42,8 @@ export class EtudiantFormComponent {
     private fb: FormBuilder,
     private etudiantService: EtudiantService,
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef,
   ) {
     this.etudiantForm = this.fb.group({
       nom: ['', [Validators.required]],
@@ -71,6 +72,7 @@ export class EtudiantFormComponent {
           verticalPosition: 'top',
           panelClass: ['success-snackbar']
         });
+        this.cdr.detectChanges();
         this.router.navigate(['/etudiants']);
       },
       error: (err) => {
@@ -82,6 +84,7 @@ export class EtudiantFormComponent {
           verticalPosition: 'top',
           panelClass: ['error-snackbar']
         });
+        this.cdr.detectChanges();
       }
     });
   }

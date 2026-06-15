@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { finalize } from 'rxjs/operators';
 import { BulletinService } from '../../../core/services/bulletin.service';
@@ -149,7 +150,7 @@ import { Bulletin } from '../../../core/models/bulletin.model';
     </div>
   `,
 })
-export class BulletinViewComponent {
+export class BulletinViewComponent implements OnInit {
   searchForm: FormGroup;
   bulletin: Bulletin | null = null;
   errorMessage = '';
@@ -159,9 +160,22 @@ export class BulletinViewComponent {
     private fb: FormBuilder,
     private bulletinService: BulletinService,
     private snackBar: MatSnackBar,
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
   ) {
     this.searchForm = this.fb.group({
       etudiantId: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
+    });
+  }
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      const etudiantId = params['etudiantId'];
+      if (etudiantId) {
+        this.searchForm.patchValue({ etudiantId: String(etudiantId) });
+        this.onSubmit();
+      }
+      this.cdr.detectChanges();
     });
   }
 
@@ -178,10 +192,16 @@ export class BulletinViewComponent {
     const etudiantId = Number(this.searchForm.value.etudiantId);
     this.bulletinService
       .getBulletin(etudiantId)
-      .pipe(finalize(() => (this.isLoading = false)))
+      .pipe(
+        finalize(() => {
+          this.isLoading = false;
+          this.cdr.detectChanges();
+        }),
+      )
       .subscribe({
         next: (bulletin) => {
           this.bulletin = bulletin;
+          this.cdr.detectChanges();
         },
         error: (err) => {
           if (err?.status === 404) {
@@ -195,6 +215,7 @@ export class BulletinViewComponent {
             verticalPosition: 'top',
             panelClass: ['error-snackbar'],
           });
+          this.cdr.detectChanges();
         },
       });
   }

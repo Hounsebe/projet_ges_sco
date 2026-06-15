@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -99,6 +99,7 @@ export class InscriptionFormComponent implements OnInit {
     private coursService: CoursService,
     private inscriptionService: InscriptionService,
     private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef,
   ) {
     this.inscriptionForm = this.fb.group({
       etudiantId: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
@@ -108,10 +109,14 @@ export class InscriptionFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.coursService.getAll().subscribe({
-      next: (cours) => (this.coursList = cours),
+      next: (cours) => {
+        this.coursList = cours;
+        this.cdr.detectChanges();
+      },
       error: () => {
         this.coursList = [];
         this.errorMessage = 'Impossible de charger la liste des cours. Veuillez réessayer.';
+        this.cdr.detectChanges();
       },
     });
   }
@@ -139,6 +144,7 @@ export class InscriptionFormComponent implements OnInit {
           verticalPosition: 'top',
         });
         this.onReset();
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.isSubmitting = false;
@@ -149,6 +155,7 @@ export class InscriptionFormComponent implements OnInit {
           verticalPosition: 'top',
           panelClass: ['error-snackbar'],
         });
+        this.cdr.detectChanges();
       },
     });
   }
