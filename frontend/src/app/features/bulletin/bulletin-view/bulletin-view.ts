@@ -3,14 +3,24 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { finalize } from 'rxjs/operators';
 import { BulletinService } from '../../../core/services/bulletin.service';
+import { EtudiantService } from '../../../core/services/etudiant.service';
 import { Bulletin } from '../../../core/models/bulletin.model';
+import { Etudiant } from '../../../core/models/etudiant.model';
 
 @Component({
   selector: 'app-bulletin-view',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatSnackBarModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatSnackBarModule,
+    MatSelectModule,
+    MatFormFieldModule,
+  ],
   template: `
     <div class="p-6 max-w-6xl mx-auto flex flex-col gap-8">
       <div class="space-y-2">
@@ -29,20 +39,22 @@ import { Bulletin } from '../../../core/models/bulletin.model';
       <section class="grid gap-4 bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <h2 class="text-xl font-semibold text-slate-900">Recherche par ID étudiant</h2>
-            <p class="text-sm text-slate-500">Entrez un identifiant pour charger le bulletin.</p>
+            <h2 class="text-xl font-semibold text-slate-900">Sélectionner un étudiant</h2>
+            <p class="text-sm text-slate-500">Choisissez un étudiant pour charger son bulletin de notes.</p>
           </div>
           <form
             [formGroup]="searchForm"
             (ngSubmit)="onSubmit()"
             class="flex flex-col gap-3 sm:flex-row sm:items-center w-full sm:w-auto"
           >
-            <input
-              type="text"
-              formControlName="etudiantId"
-              placeholder="ID étudiant"
-              class="w-full sm:w-48 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 shadow-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-            />
+            <mat-form-field appearance="outline" class="w-full sm:w-72">
+              <mat-label>Étudiant</mat-label>
+              <mat-select formControlName="etudiantId" id="etudiant-select">
+                <mat-option *ngFor="let et of etudiants" [value]="et.id">
+                  {{ et.prenom }} {{ et.nom }} ({{ et.matricule }})
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
             <button
               type="submit"
               [disabled]="searchForm.invalid || isLoading"
@@ -153,26 +165,41 @@ import { Bulletin } from '../../../core/models/bulletin.model';
 export class BulletinViewComponent implements OnInit {
   searchForm: FormGroup;
   bulletin: Bulletin | null = null;
+  etudiants: Etudiant[] = [];
   errorMessage = '';
   isLoading = false;
 
   constructor(
     private fb: FormBuilder,
     private bulletinService: BulletinService,
+    private etudiantService: EtudiantService,
     private snackBar: MatSnackBar,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
   ) {
     this.searchForm = this.fb.group({
-      etudiantId: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
+      etudiantId: [null, [Validators.required]],
     });
   }
 
   ngOnInit(): void {
+    // Charger la liste des étudiants pour le select
+    this.etudiantService.getAll().subscribe({
+      next: (data) => {
+        this.etudiants = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('[BulletinView] Erreur chargement étudiants:', err);
+        this.cdr.detectChanges();
+      },
+    });
+
+    // Pré-sélection via queryParams (navigation depuis la liste étudiants)
     this.route.queryParams.subscribe((params) => {
       const etudiantId = params['etudiantId'];
       if (etudiantId) {
-        this.searchForm.patchValue({ etudiantId: String(etudiantId) });
+        this.searchForm.patchValue({ etudiantId: Number(etudiantId) });
         this.onSubmit();
       }
       this.cdr.detectChanges();

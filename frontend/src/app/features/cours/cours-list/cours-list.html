@@ -100,6 +100,7 @@
         </div>
 
         <ng-container *ngIf="!loadingDetails && !detailsError">
+          <div *ngIf="statsError" class="mb-4 text-sm text-amber-600 text-center">{{ statsError }}</div>
           <!-- Stats Grid -->
           <div class="stats-grid">
             <div class="stat-card">
@@ -164,7 +165,7 @@
 
             <div *ngIf="inscrits.length > 0" class="inscrits-chips">
               <span *ngFor="let e of inscrits" class="inscrit-chip">
-                <span class="inscrit-chip__avatar">{{ e.prenom.charAt(0) }}{{ e.nom.charAt(0) }}</span>
+                <span class="inscrit-chip__avatar">{{ (e.prenom || '?').charAt(0) }}{{ (e.nom || '?').charAt(0) }}</span>
                 {{ e.prenom }} {{ e.nom }}
               </span>
             </div>

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -56,5 +57,10 @@ public class PedagogieController {
             note.setTypeEvaluation(noteUpdate.getTypeEvaluation());
         }
         return ResponseEntity.ok(noteRepository.save(note));
+    }
+
+    @GetMapping("/inscriptions")
+    public ResponseEntity<List<Inscription>> listerInscriptions() {
+        return ResponseEntity.ok(inscriptionRepository.findAll());
     }
 }

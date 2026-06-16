@@ -1,5 +1,6 @@
 package com.etablissement.gestion.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -24,6 +25,7 @@ public class Inscription {
     private LocalDate dateInscription;
     private String statut;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "inscription", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Note> notes;
 

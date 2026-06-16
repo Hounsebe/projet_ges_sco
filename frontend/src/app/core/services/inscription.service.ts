@@ -12,6 +12,10 @@ export class InscriptionService {
 
   constructor(private http: HttpClient) {}
 
+  getAll(): Observable<Inscription[]> {
+    return this.http.get<Inscription[]>(this.apiUrl);
+  }
+
   inscrire(data: { etudiant: { id: number }; cours: { id: number } }): Observable<Inscription> {
     return this.http.post<Inscription>(this.apiUrl, data);
   }

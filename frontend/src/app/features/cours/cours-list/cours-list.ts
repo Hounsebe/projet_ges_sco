@@ -1,8 +1,8 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { forkJoin } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -36,6 +36,7 @@ export class CoursListComponent implements OnInit {
   inscrits: Etudiant[] = [];
   loadingDetails = false;
   detailsError = '';
+  statsError = '';
 
   constructor(
     private coursService: CoursService,
@@ -74,6 +75,7 @@ export class CoursListComponent implements OnInit {
       this.stats = null;
       this.inscrits = [];
       this.detailsError = '';
+      this.statsError = '';
       this.cdr.detectChanges();
       return;
     }
@@ -82,12 +84,18 @@ export class CoursListComponent implements OnInit {
     this.stats = null;
     this.inscrits = [];
     this.detailsError = '';
+    this.statsError = '';
     this.loadingDetails = true;
     this.cdr.detectChanges();
 
     forkJoin({
-      stats: this.coursService.getStats(cours.id),
-      inscrits: this.coursService.getInscrits(cours.id),
+      stats: this.coursService.getStats(cours.id).pipe(
+        catchError(() => {
+          this.statsError = 'Statistiques indisponibles pour ce cours.';
+          return of({ moyenne: null, noteMin: null, noteMax: null, tauxReussite: null } as CoursStats);
+        }),
+      ),
+      inscrits: this.coursService.getInscrits(cours.id).pipe(catchError(() => of([] as Etudiant[]))),
     })
       .pipe(
         finalize(() => {
@@ -98,11 +106,12 @@ export class CoursListComponent implements OnInit {
       .subscribe({
         next: ({ stats, inscrits }) => {
           this.stats = stats;
-          this.inscrits = inscrits;
+          this.inscrits = inscrits ?? [];
           this.cdr.detectChanges();
         },
         error: () => {
           this.detailsError = 'Impossible de charger les détails de ce cours.';
+          this.inscrits = [];
           this.cdr.detectChanges();
         },
       });

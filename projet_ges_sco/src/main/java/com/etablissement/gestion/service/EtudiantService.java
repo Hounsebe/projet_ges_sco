@@ -1,10 +1,10 @@
-package com.etablissement.gestion.services;
+package com.etablissement.gestion.service;
 
-import com.etablissement.gestion.dtos.EtudiantDto;
+import com.etablissement.gestion.dto.EtudiantDto;
 import com.etablissement.gestion.model.Inscription;
 import com.etablissement.gestion.repository.EtudiantRepository;
 import com.etablissement.gestion.repository.InscriptionRepository;
-import com.etablissement.gestion.services.Impl.EtudiantImpl;
+import com.etablissement.gestion.service.impl.EtudiantImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

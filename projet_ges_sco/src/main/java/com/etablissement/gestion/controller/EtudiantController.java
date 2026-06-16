@@ -1,7 +1,7 @@
 package com.etablissement.gestion.controller;
 
-import com.etablissement.gestion.dtos.EtudiantDto;
-import com.etablissement.gestion.services.EtudiantService;
+import com.etablissement.gestion.dto.EtudiantDto;
+import com.etablissement.gestion.service.EtudiantService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

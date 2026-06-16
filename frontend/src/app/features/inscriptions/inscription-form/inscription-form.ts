@@ -3,12 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { forkJoin } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { CoursService } from '../../../core/services/cours.service';
+import { EtudiantService } from '../../../core/services/etudiant.service';
 import { InscriptionService } from '../../../core/services/inscription.service';
 import { Cours } from '../../../core/models/cours.model';
+import { Etudiant } from '../../../core/models/etudiant.model';
 
 @Component({
   selector: 'app-inscription-form',
@@ -17,7 +20,6 @@ import { Cours } from '../../../core/models/cours.model';
     CommonModule,
     ReactiveFormsModule,
     MatFormFieldModule,
-    MatInputModule,
     MatSelectModule,
     MatButtonModule,
     MatSnackBarModule,
@@ -28,35 +30,44 @@ import { Cours } from '../../../core/models/cours.model';
         <p class="text-sm uppercase tracking-[0.3em] text-indigo-600 font-semibold">Inscription</p>
         <h1 class="text-3xl font-semibold text-slate-900">Inscrire un étudiant à un cours</h1>
         <p class="text-sm text-slate-500">
-          Remplissez les informations ci-dessous pour enregistrer une nouvelle inscription.
+          Sélectionnez un étudiant et un cours pour enregistrer une nouvelle inscription.
         </p>
       </div>
 
       <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <form [formGroup]="inscriptionForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <div *ngIf="isLoadingData" class="text-sm text-slate-400 py-4 text-center">
+          Chargement des listes...
+        </div>
+
+        <form
+          *ngIf="!isLoadingData"
+          [formGroup]="inscriptionForm"
+          (ngSubmit)="onSubmit()"
+          class="space-y-6"
+        >
           <div class="grid gap-6">
             <mat-form-field appearance="outline" class="w-full">
-              <mat-label>ID de l'étudiant</mat-label>
-              <input matInput type="number" formControlName="etudiantId" placeholder="0001" />
-              <p class="mt-2 text-xs text-slate-500">Saisissez l'ID numérique de l'étudiant</p>
-              <mat-error *ngIf="inscriptionForm.get('etudiantId')?.hasError('required')"
-                >L'ID étudiant est requis.</mat-error
-              >
-              <mat-error *ngIf="inscriptionForm.get('etudiantId')?.hasError('pattern')"
-                >Entrez un ID numérique valide.</mat-error
-              >
+              <mat-label>Étudiant</mat-label>
+              <mat-select formControlName="etudiantId">
+                <mat-option *ngFor="let etudiant of etudiantsList" [value]="etudiant.id">
+                  {{ etudiant.nom }} {{ etudiant.prenom }} ({{ etudiant.matricule }})
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="inscriptionForm.get('etudiantId')?.hasError('required')">
+                L'étudiant est requis.
+              </mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="w-full">
               <mat-label>Cours</mat-label>
               <mat-select formControlName="coursId">
-                <mat-option *ngFor="let cours of coursList" [value]="cours.id"
-                  >{{ cours.intitule }} ({{ cours.code }})</mat-option
-                >
+                <mat-option *ngFor="let cours of coursList" [value]="cours.id">
+                  {{ cours.intitule }} ({{ cours.code }})
+                </mat-option>
               </mat-select>
-              <mat-error *ngIf="inscriptionForm.get('coursId')?.hasError('required')"
-                >Le cours est requis.</mat-error
-              >
+              <mat-error *ngIf="inscriptionForm.get('coursId')?.hasError('required')">
+                Le cours est requis.
+              </mat-error>
             </mat-form-field>
           </div>
 
@@ -90,35 +101,50 @@ import { Cours } from '../../../core/models/cours.model';
 })
 export class InscriptionFormComponent implements OnInit {
   inscriptionForm: FormGroup;
+  etudiantsList: Etudiant[] = [];
   coursList: Cours[] = [];
   errorMessage = '';
   isSubmitting = false;
+  isLoadingData = true;
 
   constructor(
     private fb: FormBuilder,
     private coursService: CoursService,
+    private etudiantService: EtudiantService,
     private inscriptionService: InscriptionService,
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef,
   ) {
     this.inscriptionForm = this.fb.group({
-      etudiantId: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
+      etudiantId: ['', Validators.required],
       coursId: ['', Validators.required],
     });
   }
 
   ngOnInit(): void {
-    this.coursService.getAll().subscribe({
-      next: (cours) => {
-        this.coursList = cours;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.coursList = [];
-        this.errorMessage = 'Impossible de charger la liste des cours. Veuillez réessayer.';
-        this.cdr.detectChanges();
-      },
-    });
+    forkJoin({
+      etudiants: this.etudiantService.getAll(),
+      cours: this.coursService.getAll(),
+    })
+      .pipe(
+        finalize(() => {
+          this.isLoadingData = false;
+          this.cdr.detectChanges();
+        }),
+      )
+      .subscribe({
+        next: ({ etudiants, cours }) => {
+          this.etudiantsList = etudiants;
+          this.coursList = cours;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.etudiantsList = [];
+          this.coursList = [];
+          this.errorMessage = 'Impossible de charger les listes. Veuillez réessayer.';
+          this.cdr.detectChanges();
+        },
+      });
   }
 
   onSubmit(): void {
@@ -148,7 +174,7 @@ export class InscriptionFormComponent implements OnInit {
       },
       error: (err) => {
         this.isSubmitting = false;
-        this.errorMessage = err?.error?.message || "Erreur lors de l'inscription de l'étudiant.";
+        this.errorMessage = err?.message || "Erreur lors de l'inscription de l'étudiant.";
         this.snackBar.open(this.errorMessage, 'Fermer', {
           duration: 5000,
           horizontalPosition: 'end',

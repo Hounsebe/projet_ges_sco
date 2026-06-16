@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,7 +6,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { finalize } from 'rxjs/operators';
 import { NoteService } from '../../../core/services/note.service';
+import { InscriptionService } from '../../../core/services/inscription.service';
+import { Inscription } from '../../../core/models/inscription.model';
 
 @Component({
   selector: 'app-note-form',
@@ -28,22 +31,27 @@ import { NoteService } from '../../../core/services/note.service';
         </p>
         <h1 class="text-3xl font-semibold text-slate-900">Attribuer une note à un étudiant</h1>
         <p class="text-sm text-slate-500">
-          Renseignez l'inscription, le type d'évaluation et la note pour enregistrer le résultat.
+          Sélectionnez l'inscription, le type d'évaluation et la note pour enregistrer le résultat.
         </p>
       </div>
 
       <section class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <form [formGroup]="noteForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <div *ngIf="isLoadingInscriptions" class="text-sm text-slate-400 py-4 text-center">
+          Chargement des inscriptions...
+        </div>
+
+        <form *ngIf="!isLoadingInscriptions" [formGroup]="noteForm" (ngSubmit)="onSubmit()" class="space-y-6">
           <div class="grid gap-6 md:grid-cols-2">
             <mat-form-field appearance="outline" class="w-full">
-              <mat-label>ID de l'inscription</mat-label>
-              <input matInput type="number" formControlName="inscriptionId" placeholder="0001" />
-              <mat-error *ngIf="noteForm.get('inscriptionId')?.hasError('required')"
-                >L'ID de l'inscription est requis.</mat-error
-              >
-              <mat-error *ngIf="noteForm.get('inscriptionId')?.hasError('pattern')"
-                >Entrez un identifiant valide.</mat-error
-              >
+              <mat-label>Inscription</mat-label>
+              <mat-select formControlName="inscriptionId">
+                <mat-option *ngFor="let inscription of inscriptionsList" [value]="inscription.id">
+                  {{ getInscriptionLabel(inscription) }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="noteForm.get('inscriptionId')?.hasError('required')">
+                L'inscription est requise.
+              </mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="w-full">
@@ -53,9 +61,9 @@ import { NoteService } from '../../../core/services/note.service';
                 <mat-option value="EXAM">EXAM</mat-option>
                 <mat-option value="TP">TP</mat-option>
               </mat-select>
-              <mat-error *ngIf="noteForm.get('typeEvaluation')?.hasError('required')"
-                >Le type d'évaluation est requis.</mat-error
-              >
+              <mat-error *ngIf="noteForm.get('typeEvaluation')?.hasError('required')">
+                Le type d'évaluation est requis.
+              </mat-error>
             </mat-form-field>
           </div>
 
@@ -71,15 +79,16 @@ import { NoteService } from '../../../core/services/note.service';
                 max="20"
                 step="0.1"
               />
-              <mat-error *ngIf="noteForm.get('valeur')?.hasError('required')"
-                >La note est requise.</mat-error
-              >
+              <mat-error *ngIf="noteForm.get('valeur')?.hasError('required')">
+                La note est requise.
+              </mat-error>
               <mat-error
                 *ngIf="
                   noteForm.get('valeur')?.hasError('min') || noteForm.get('valeur')?.hasError('max')
                 "
-                >La note doit être comprise entre 0 et 20.</mat-error
               >
+                La note doit être comprise entre 0 et 20.
+              </mat-error>
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="w-full">
@@ -127,24 +136,56 @@ import { NoteService } from '../../../core/services/note.service';
     </div>
   `,
 })
-export class NoteFormComponent {
+export class NoteFormComponent implements OnInit {
   noteForm: FormGroup;
+  inscriptionsList: Inscription[] = [];
   successMessage = '';
   errorMessage = '';
   isSubmitting = false;
+  isLoadingInscriptions = true;
 
   constructor(
     private fb: FormBuilder,
     private noteService: NoteService,
+    private inscriptionService: InscriptionService,
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef,
   ) {
     this.noteForm = this.fb.group({
-      inscriptionId: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
+      inscriptionId: ['', Validators.required],
       typeEvaluation: ['', Validators.required],
       valeur: ['', [Validators.required, Validators.min(0), Validators.max(20)]],
       commentaire: [''],
     });
+  }
+
+  ngOnInit(): void {
+    this.inscriptionService
+      .getAll()
+      .pipe(
+        finalize(() => {
+          this.isLoadingInscriptions = false;
+          this.cdr.detectChanges();
+        }),
+      )
+      .subscribe({
+        next: (inscriptions) => {
+          this.inscriptionsList = inscriptions;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          this.inscriptionsList = [];
+          this.errorMessage = 'Impossible de charger les inscriptions. Veuillez réessayer.';
+          this.cdr.detectChanges();
+        },
+      });
+  }
+
+  getInscriptionLabel(inscription: Inscription): string {
+    const nom = inscription.etudiant?.nom ?? '—';
+    const prenom = inscription.etudiant?.prenom ?? '';
+    const cours = inscription.cours?.intitule ?? '—';
+    return `${nom} ${prenom} — ${cours}`;
   }
 
   onSubmit(): void {
@@ -178,7 +219,7 @@ export class NoteFormComponent {
       },
       error: (err) => {
         this.isSubmitting = false;
-        this.errorMessage = err?.error?.message || "Erreur lors de l'enregistrement de la note.";
+        this.errorMessage = err?.message || "Erreur lors de l'enregistrement de la note.";
         this.snackBar.open(this.errorMessage, 'Fermer', {
           duration: 5000,
           horizontalPosition: 'end',

@@ -1,6 +1,6 @@
-package com.etablissement.gestion.services.Impl;
+package com.etablissement.gestion.service.impl;
 
-import com.etablissement.gestion.dtos.EtudiantDto;
+import com.etablissement.gestion.dto.EtudiantDto;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.etablissement.gestion.dtos;
+package com.etablissement.gestion.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
